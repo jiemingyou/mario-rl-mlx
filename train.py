@@ -1,13 +1,11 @@
-import torch
+import argparse
 import datetime
-import numpy as np
-import mlx.core as mx
 from pathlib import Path
 import gym_super_mario_bros
 from gym.wrappers import FrameStack
 from nes_py.wrappers import JoypadSpace
 
-from model import Mario
+from agent import Mario
 from logger import MetricLogger
 from environment import (
     SkipFrame,
@@ -18,6 +16,12 @@ from environment import (
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Train a Super Mario playing agent.")
+    parser.add_argument(
+        "--epochs", type=int, default=40, help="Number of episodes to train."
+    )
+    args = parser.parse_args()
+
     env = gym_super_mario_bros.make(
         "SuperMarioBros-1-1-v3",
         render_mode="rgb",
@@ -42,7 +46,7 @@ def main():
     )
 
     logger = MetricLogger(save_dir)
-    episodes = 40
+    episodes = args.epochs
 
     for e in range(episodes):
 
