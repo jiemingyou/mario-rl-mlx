@@ -23,7 +23,7 @@ class Mario:
         self.exploration_rate_decay = 0.9999975  # 0.99999975
         self.exploration_rate_min = 0.1
         self.curr_step = 0
-        self.save_every = 1e3
+        self.save_every = 1e5
         self.gamma = 0.9
         self.burnin = 1e2  # 1e4
         self.learn_every = 3
@@ -131,8 +131,8 @@ class Mario:
 
     def save(self):
         save_path = (
-            self.save_dir
-            / f"mario_net_{int(self.curr_step // self.save_every)}.safetensors"
+            str(self.save_dir)
+            + f"mario_net_{int(self.curr_step // self.save_every)}.safetensors"
         )
         self.net.save_weights(save_path)
         print(f"Model checkpoint saved to {save_path} at step {self.curr_step}")
