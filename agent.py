@@ -1,4 +1,3 @@
-import copy
 import numpy as np
 import mlx.nn as nn
 import mlx.core as mx
@@ -20,7 +19,7 @@ class Mario:
 
         # Hyperparameters
         self.exploration_rate = 1
-        self.exploration_rate_decay = 0.9999975  # 0.99999975
+        self.exploration_rate_decay = 0.9999995  # 0.99999975
         self.exploration_rate_min = 0.1
         self.curr_step = 0
         self.save_every = 1e5
@@ -30,11 +29,11 @@ class Mario:
         self.sync_every = 1e2  # 1e4
 
         # Memory replay
-        self.memory = deque(maxlen=1000)  # 100000
+        self.memory = deque(maxlen=2000)  # 100000
         self.batch_size = 12  # 32
 
         # Loss and optimizer
-        self.optimizer = optim.Adam(learning_rate=0.00025)
+        self.optimizer = optim.Adam(learning_rate=0.001)  # 0.00025
         self.loss_and_grad_fn = nn.value_and_grad(self.net, self.loss_fn)
 
     def act(self, state: mx.array):
@@ -110,12 +109,12 @@ class Mario:
         ]
         return reward + (1 - done) * self.gamma * next_Q
 
-    def loss_fn(self, _, X, y):
-        return mx.mean(nn.losses.smooth_l1_loss(X, y))
+    def loss_fn(self, X, y):
+        return nn.losses.smooth_l1_loss(X, y)
 
     def update_Q_online(self, td_estimate, td_target):
         # Get the loss and gradients
-        loss, grads = self.loss_and_grad_fn(self.net, td_estimate, td_target)
+        loss, grads = self.loss_and_grad_fn(td_estimate, td_target)
 
         # Update the optimizer state and model parameters
         self.optimizer.update(self.net, grads)
