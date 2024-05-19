@@ -47,7 +47,7 @@ class Mario:
         """
 
         # EXPLORE
-        if (np.random.rand() < self.exploration_rate) or (state[0] == 1):
+        if (np.random.rand() < self.exploration_rate) or (state.shape[0] == 1):
             action_idx = np.random.randint(self.action_dim)
 
         # EXPLOIT
