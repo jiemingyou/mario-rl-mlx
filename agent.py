@@ -47,14 +47,12 @@ class Mario:
         """
 
         # EXPLORE
-        if np.random.rand() < self.exploration_rate:
+        if (np.random.rand() < self.exploration_rate) or (state[0] == 1):
             action_idx = np.random.randint(self.action_dim)
 
         # EXPLOIT
         else:
             state = state[None, :]  # unsqueeze to add batch dimension
-            if state.shape[0] == 1:  # if we don't have enough frames to make a stack
-                return np.random.randint(self.action_dim)
             action_values = self.net(state, model="online")
             action_idx = mx.argmax(action_values, axis=1).item()
 
